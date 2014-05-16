@@ -12,9 +12,11 @@ namespace sv
         class draw_obj : public sf::Drawable
         {
             protected:
-            T shape;
+            //T shape;
 
             public:
+            T shape;
+
             draw_obj() 
             {
 
@@ -25,6 +27,14 @@ namespace sv
             void draw(sf::RenderTarget& target, sf::RenderStates state) const
             {
                 target.draw(shape);
+            }
+
+            template <class U>
+            bool collision(draw_obj<U> d)
+            {
+                if (shape.getGlobalBounds().intersects(d.shape.getGlobalBounds()))
+                    return true;
+                return false;
             }
 
             virtual ~draw_obj()

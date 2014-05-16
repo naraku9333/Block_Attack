@@ -9,7 +9,7 @@ namespace sv
         {
             shape.setRadius(BALL_RAD);
             shape.setOrigin({ BALL_RAD, BALL_RAD });
-            shape.setPosition({ 400, 738 });
+            shape.setPosition({ SCREEN_W / 2, BALL_STRT });
             shape.setFillColor({ 0, 178, 238 });
         }
 

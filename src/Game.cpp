@@ -13,7 +13,9 @@ namespace sv
             ball(),
             player()
         {
+            window.setFramerateLimit(100);
             background.loadFromFile("res/background.png");
+
             std::srand(static_cast<std::uint32_t>(std::time(nullptr)));
             static std::vector<sf::Color> colors
             {
@@ -42,8 +44,6 @@ namespace sv
         {
             while (window.isOpen())
             {
-                sf::Vector2f ply_vel{ 0, 0 }, ball_vel{ 0, 0 };
-
                 sf::Event event;
                 while (window.pollEvent(event))//event loop
                 {
@@ -55,19 +55,18 @@ namespace sv
                         case sf::Event::KeyPressed:
                             if (event.key.code == sf::Keyboard::Left)
                             {
-                                player.velocity.x = -0.2;
+                                player.velocity.x = -5;
                             }
                             else if (event.key.code == sf::Keyboard::Right)
                             {
-                                player.velocity.x = 0.2;
+                                player.velocity.x = 5;
                             }
                             if (event.key.code == sf::Keyboard::Space)
                             {
                                 if (ball.velocity == sf::Vector2f{})
                                 {
-                                    float rndx = (std::rand() % 4 - 2) / 10.f;
-                                    float rndy = (std::rand() % 4 - 2) / -10.f;
-                                    ball.velocity = sf::Vector2f{ rndx, rndy };
+                                    float rndx = (std::rand() % 100 - 50) / 100.f;
+                                    ball.velocity = sf::Vector2f{ rndx, -5.f };
                                 }
                             }
                             break;
@@ -91,13 +90,14 @@ namespace sv
         {
             player.move();
             ball.move();
+            collision(player, ball);
         }
 
         //draw objects
         void Game::render()
         {
             window.clear();
-           // window.draw(sf::Sprite(background));
+            window.draw(sf::Sprite(background));
 
             for (auto& b : blocks)
                 window.draw(b);
@@ -106,6 +106,14 @@ namespace sv
             window.draw(player);
 
             window.display();
+        }
+
+        void Game::collision(Paddle& p, Ball& b)
+        {
+            if (b.collision(p) && b.velocity.y > 0.f)
+            {
+                b.velocity.y *= -1;
+            }           
         }
     }
 }

@@ -21,6 +21,8 @@ namespace sv
             sf::Texture background;
             sf::RenderWindow window;
 
+            void collision(Paddle&, Ball&);
+
             public:
             Game();
             void run();
