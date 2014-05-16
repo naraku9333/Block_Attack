@@ -17,7 +17,8 @@ namespace sv
             Ball ball;
             Paddle player;
             std::vector<Block> blocks;
-
+            
+            sf::Texture background;
             sf::RenderWindow window;
 
             public:

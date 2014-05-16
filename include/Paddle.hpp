@@ -11,7 +11,12 @@ namespace sv
         class Paddle : public draw_obj<sf::RectangleShape>
         {
             public:
+
+            sf::Vector2f velocity;
+
             Paddle();
+
+            void move();
         };
     }
 }

@@ -1,4 +1,5 @@
 #include <Block.hpp>
+#include <defs.hpp>
 
 namespace sv
 {
@@ -6,8 +7,8 @@ namespace sv
     {
         Block::Block(const sf::Vector2f pos, const sf::Color c)
         {
-            shape.setSize({ 59.f, 20.f });
-            shape.setOrigin({ 29.5f, 10.f });
+            shape.setSize({ BLOCK_W, BLOCK_H });
+            shape.setOrigin({ BLOCK_W / 2.f, BLOCK_H / 2.f });
             shape.setPosition(pos);
             shape.setFillColor(c);
         }

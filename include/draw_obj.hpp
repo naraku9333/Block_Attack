@@ -13,6 +13,7 @@ namespace sv
         {
             protected:
             T shape;
+
             public:
             draw_obj() 
             {

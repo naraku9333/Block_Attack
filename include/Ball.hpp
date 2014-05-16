@@ -11,7 +11,11 @@ namespace sv
         class Ball : public draw_obj<sf::CircleShape>
         {
             public:
+            sf::Vector2f velocity;
+
             Ball();
+
+            void move();
         };
     }
 }
