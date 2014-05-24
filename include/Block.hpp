@@ -11,6 +11,7 @@ namespace sv
         class Block : public draw_obj<sf::RectangleShape>
         {
             public:
+            bool is_hit;
             Block(const sf::Vector2f = { 0, 0 }, const sf::Color = sf::Color::Blue);
         };
     }

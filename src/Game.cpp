@@ -4,6 +4,7 @@
 #include <cmath>
 #include <defs.hpp>
 #include <cstdint>
+#include <iostream>
 
 namespace sv
 {
@@ -35,10 +36,13 @@ namespace sv
                 for (int j = 0; j < 10; ++j)//cols
                 {
                     float x = BLK_BUF + BLOCK_W / 2.f + (BLOCK_W + 1) * j;
-                    blocks.emplace_back(Block({ x, y }, /*colors[std::rand() % 6]*/colors[static_cast<std::uint32_t>(fmod(i + j, 6))]));
+                    blocks.emplace_back(
+                        Block({ x, y }, colors[static_cast<std::uint32_t>(fmod(i + j, 6))])
+                        );
                 }
             }
         }
+
         //run game
         void Game::run()
         {
@@ -52,7 +56,7 @@ namespace sv
                         case sf::Event::Closed:
                             window.close();
                             break;
-                        case sf::Event::KeyPressed:
+                        case sf::Event::KeyPressed:                           
                             if (event.key.code == sf::Keyboard::Left)
                             {
                                 player.velocity.x = -5;
@@ -65,8 +69,8 @@ namespace sv
                             {
                                 if (ball.velocity == sf::Vector2f{})
                                 {
-                                    float rndx = (std::rand() % 100 - 50) / 100.f;
-                                    ball.velocity = sf::Vector2f{ rndx, -5.f };
+                                    //float rndx = (std::rand() % SCREEN_W - SCREEN_W / 2) / 100.f;
+                                    ball.velocity = { BALL_SPEED, -BALL_SPEED };
                                 }
                             }
                             break;
@@ -90,7 +94,12 @@ namespace sv
         {
             player.move();
             ball.move();
-            collision(player, ball);
+            collision(ball, player);
+            for (auto& b : blocks)
+            {
+                collision(ball, b);
+            }
+            blocks.erase(std::remove_if(blocks.begin(), blocks.end(), [](Block& b){ return b.is_hit; }), blocks.end());
         }
 
         //draw objects
@@ -108,12 +117,37 @@ namespace sv
             window.display();
         }
 
-        void Game::collision(Paddle& p, Ball& b)
+        void Game::collision(Ball& ball, Paddle& other)
         {
-            if (b.collision(p) && b.velocity.y > 0.f)
-            {
-                b.velocity.y *= -1;
+            if (ball.collision(other) && ball.velocity != sf::Vector2f{})
+            {                      
+                float relXInt = other.shape.getPosition().x - ball.shape.getPosition().x;
+                float norm = relXInt / (PADDLE_W / 2.f);
+                float angle = norm * (5.f * M_PI / 12.f);
+
+                ball.velocity.x = BALL_SPEED * std::sin(angle);
+                ball.velocity.y = BALL_SPEED * -std::cos(angle);
             }           
+        }
+
+        void Game::collision(Ball& b, Block& bl)
+        {
+            if (b.collision(bl))
+            {
+                bl.is_hit = true;
+
+                auto ballpos = b.shape.getPosition();
+                auto blockpos = bl.shape.getPosition();
+
+                if (ballpos.y > blockpos.y - BLOCK_H / 2.f && ballpos.y < blockpos.y + BLOCK_H / 2.f)//block hit from side
+                {
+                    b.velocity.x *= -1;
+                }
+                else
+                {
+                    b.velocity.y *= -1;
+                }                
+            }
         }
     }
 }
