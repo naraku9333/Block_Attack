@@ -14,10 +14,13 @@ namespace sv
     {
         class Game
         {
+            int score, lives;
             Ball ball;
             Paddle player;
             std::vector<Block> blocks;
             
+            sf::Font font;
+            sf::Text lives_txt;
             sf::Texture background;
             sf::RenderWindow window;
 

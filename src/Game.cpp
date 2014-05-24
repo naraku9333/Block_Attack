@@ -11,11 +11,16 @@ namespace sv
     namespace ba
     {
         Game::Game() : window{ { SCREEN_W, SCREEN_H }, "Block Attack" },
+            score(0),
+            lives(3),
             ball(),
-            player()
+            player(),
+            lives_txt("", font)
         {
             window.setFramerateLimit(100);
+            font.loadFromFile("res/Sansation.ttf");
             background.loadFromFile("res/background.png");
+            lives_txt.setPosition(SCREEN_W - 120, 0);
 
             std::srand(static_cast<std::uint32_t>(std::time(nullptr)));
             static std::vector<sf::Color> colors
@@ -36,8 +41,9 @@ namespace sv
                 for (int j = 0; j < 10; ++j)//cols
                 {
                     float x = BLK_BUF + BLOCK_W / 2.f + (BLOCK_W + 1) * j;
+                    std::uint32_t index = static_cast<std::uint32_t>(fmod(i + j, 6));
                     blocks.emplace_back(
-                        Block({ x, y }, colors[static_cast<std::uint32_t>(fmod(i + j, 6))])
+                        Block({ x, y }, colors[index], (index + 1) * 10)
                         );
                 }
             }
@@ -69,8 +75,8 @@ namespace sv
                             {
                                 if (ball.velocity == sf::Vector2f{})
                                 {
-                                    //float rndx = (std::rand() % SCREEN_W - SCREEN_W / 2) / 100.f;
-                                    ball.velocity = { BALL_SPEED, -BALL_SPEED };
+                                    float rndx = (std::rand() % SCREEN_W - SCREEN_W / 2) / 100.f;
+                                    ball.velocity = { rndx, -BALL_SPEED };
                                 }
                             }
                             break;
@@ -113,7 +119,9 @@ namespace sv
 
             window.draw(ball);
             window.draw(player);
-
+            lives_txt.setString("Lives: " + std::to_string(lives));
+            window.draw(lives_txt);
+            window.draw(sf::Text("Score: " + std::to_string(score), font));
             window.display();
         }
 
@@ -123,7 +131,7 @@ namespace sv
             {                      
                 float relXInt = other.shape.getPosition().x - ball.shape.getPosition().x;
                 float norm = relXInt / (PADDLE_W / 2.f);
-                float angle = norm * (5.f * M_PI / 12.f);
+                float angle = norm * ( M_PI / 3.f);
 
                 ball.velocity.x = BALL_SPEED * std::sin(angle);
                 ball.velocity.y = BALL_SPEED * -std::cos(angle);
@@ -135,6 +143,7 @@ namespace sv
             if (b.collision(bl))
             {
                 bl.is_hit = true;
+                score += bl.score;
 
                 auto ballpos = b.shape.getPosition();
                 auto blockpos = bl.shape.getPosition();

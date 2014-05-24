@@ -12,7 +12,8 @@ namespace sv
         {
             public:
             bool is_hit;
-            Block(const sf::Vector2f = { 0, 0 }, const sf::Color = sf::Color::Blue);
+            int score;
+            Block(const sf::Vector2f = { 0, 0 }, const sf::Color = sf::Color::Blue, int = 0);
         };
     }
 }
