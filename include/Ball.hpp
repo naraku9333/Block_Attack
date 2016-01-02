@@ -15,7 +15,7 @@ namespace sv
 
             Ball();
 
-            void move();
+            bool move();
         };
     }
 }
